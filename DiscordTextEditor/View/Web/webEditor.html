@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Editor</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        #editor {
+            width: 100%;
+            height: calc(100vh - 20px); /* Пример для фиксированного отступа */
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .placeholder {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <textarea id="editor" placeholder="Введите текст..."></textarea>
+
+    <script>
+        function sendTextToWpf() {
+            let text = document.getElementById('editor').value;
+            // Отправляем текст в WPF для конвертации
+            window.chrome.webview.postMessage(text);
+        }
+
+        document.getElementById("editor").addEventListener("input", sendTextToWpf);
+    </script>
+
+</body>
+</html>
