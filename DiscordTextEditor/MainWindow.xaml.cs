@@ -27,7 +27,7 @@ namespace DiscordTextEditor
 
         private void WebView2_CoreWebView2InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e)
         {
-            WebViewControl.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
+            WebViewControl.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived; 
         }
 
         private void CoreWebView2_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
