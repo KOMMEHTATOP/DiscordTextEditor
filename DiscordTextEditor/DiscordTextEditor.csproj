@@ -19,14 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AnsiMarkdownLib" Version="0.0.1" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2957.106" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="AnsiLibEasy">
-      <HintPath>..\..\AnsiLibEasy\AnsiLibEasy\bin\Debug\net8.0\AnsiLibEasy.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

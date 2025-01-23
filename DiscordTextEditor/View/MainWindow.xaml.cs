@@ -9,7 +9,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using AnsiLibEasy.Builders;
 
 namespace DiscordTextEditor
 {
@@ -34,7 +33,7 @@ namespace DiscordTextEditor
         {
             string message = e.TryGetWebMessageAsString();
 
-            string convertedText = StringBuilderForDiscord.ApplyMultipleAnsi(message);
+            string convertedText = AnsiMarkdownLib.Builders.StringBuilderForDiscord.ApplyMultipleAnsi(message);
 
             // Отправляем обратно в WebView2
             WebViewControl.CoreWebView2.ExecuteScriptAsync($"document.getElementById('editor').value = '{convertedText}'");
