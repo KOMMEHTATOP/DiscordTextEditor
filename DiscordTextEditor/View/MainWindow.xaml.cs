@@ -1,27 +1,22 @@
-﻿using Microsoft.Web.WebView2.Core;
-using System.Text;
+﻿using DiscordTextEditor.ViewModel;
+using Microsoft.Web.WebView2.Core;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace DiscordTextEditor
 {
     public partial class MainWindow : Window
     {
-        public static MainWindow Window;
+        public static MainWindow? Window;
         public MainWindow()
         {
             InitializeComponent();
             Window = this;
+            DataContext = new MainViewModel();
             Window_Loaded();
             WebViewControl.CoreWebView2InitializationCompleted += WebView2_CoreWebView2InitializationCompleted;
-
         }
 
         private void WebView2_CoreWebView2InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e)
@@ -56,7 +51,7 @@ namespace DiscordTextEditor
 
         private void Drag(object sender, RoutedEventArgs e)
         {
-            if(Mouse.LeftButton==MouseButtonState.Pressed)
+            if (Mouse.LeftButton == MouseButtonState.Pressed && MainWindow.Window != null)
             {
                 MainWindow.Window.DragMove();
             }

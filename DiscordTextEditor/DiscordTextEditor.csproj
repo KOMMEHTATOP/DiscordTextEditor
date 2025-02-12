@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Content Include="View\Web\webEditor.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

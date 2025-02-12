@@ -14,6 +14,8 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
+            background-color: #1e1e1e; /* Темный фон */
+            color: #d4d4d4; /* Светлый текст */
         }
 
         #editor {
@@ -24,9 +26,17 @@
             border: none;
             outline: none;
             box-sizing: border-box;
+            background-color: #58584A; /* Темный фон для текстового поля */
+            color: #d4d4d4; /* Светлый текст */
+            resize: none; /* Отключение изменения размера */
         }
 
         .placeholder {
+            color: #888;
+        }
+
+        /* Стили для плейсхолдера */
+        #editor::placeholder {
             color: #888;
         }
     </style>
@@ -43,6 +53,5 @@
 
         document.getElementById("editor").addEventListener("input", sendTextToWpf);
     </script>
-
 </body>
 </html>
