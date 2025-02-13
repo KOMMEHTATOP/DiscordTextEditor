@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DiscordTextEditor"
+        xmlns:local="clr-namespace:DiscordTextEditor.ViewModel"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         
         mc:Ignorable="d"
@@ -35,10 +35,9 @@
                 Click="CloseApp"/>
         
         <Grid x:Name="FirstControlBlock" 
+              Grid.Row="1"
               HorizontalAlignment="Center" VerticalAlignment="Center" 
-              Height="219" 
-              Grid.Row="1" 
-              Width="205">
+              Height="219" Width="205">
             
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -57,24 +56,78 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="8*"/>
             </Grid.ColumnDefinitions>
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="1" Content="B" FontSize="16"/>
-            <TextBlock Grid.Column="2" Text="Заголовок первого уровня" Style="{StaticResource TextStyle}"/>
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="1" Grid.Row="1" Content="B" FontSize="14" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-            <TextBlock Grid.Column="2" Grid.Row="1" Text="Заголовок второго уровня" Style="{StaticResource TextStyle}"/>
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="1" Grid.Row="2" Content="B" FontSize="12" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-            <TextBlock Grid.Column="2" Grid.Row="2" Text="Заголовок третьего уровня" Style="{StaticResource TextStyle}"/>
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="1" Grid.Row="3" Content="B" FontSize="8" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-            <TextBlock Grid.Column="2" Grid.Row="3" Text="Поддекст" Style="{StaticResource TextStyle}"/>
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="1" Grid.Row="4" Content="B" FontSize="12" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontWeight="Bold"/>
-            <TextBlock Grid.Column="2" Grid.Row="4" Text="Жирный текст" Style="{StaticResource TextStyle}"/>
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="1" Grid.Row="5" Content="B" FontSize="12" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontStyle="Italic"/>
-            <TextBlock Grid.Column="2" Grid.Row="5" Text="Курсив" Style="{StaticResource TextStyle}"/>
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="1" Grid.Row="6" Content="B" FontSize="12" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-            <TextBlock Grid.Column="2" Grid.Row="6" Text="Подчеркнутый" Style="{StaticResource TextStyle}"/>
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="1" Grid.Row="7" Content="B" FontSize="12" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-            <TextBlock Grid.Column="2" Grid.Row="7" Text="Зачеркнутый" Style="{StaticResource TextStyle}"/>
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="1" Grid.Row="8" Content="" FontSize="12" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-            <TextBlock Grid.Column="2" Grid.Row="8" Text="Скрытый" Style="{StaticResource TextStyle}"/>
+            <Button x:Name="MyButton"
+                    Grid.Column="1" 
+                    Content="B" 
+                    FontSize="16"
+                    Command="{Binding ChangeTextCommand}"/>
+            <TextBlock Grid.Column="2" 
+                       Text="Заголовок первого уровня" 
+                       Style="{StaticResource TextStyle}"/>
+            
+            <Button Style="{StaticResource ButtonStyle}" 
+                    Grid.Column="1" Grid.Row="1" 
+                    Content="B" FontSize="14" 
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+            <TextBlock Grid.Column="2" Grid.Row="1" 
+                       Text="Заголовок второго уровня" 
+                       Style="{StaticResource TextStyle}"/>
+            
+            <Button Style="{StaticResource ButtonStyle}" 
+                    Grid.Column="1" Grid.Row="2" 
+                    Content="B" FontSize="12" 
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+            <TextBlock Grid.Column="2" Grid.Row="2" 
+                       Text="Заголовок третьего уровня" 
+                       Style="{StaticResource TextStyle}"/>
+            
+            <Button Style="{StaticResource ButtonStyle}" 
+                    Grid.Column="1" Grid.Row="3" 
+                    Content="B" FontSize="8" 
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+            <TextBlock Grid.Column="2" Grid.Row="3" 
+                       Text="Поддекст" 
+                       Style="{StaticResource TextStyle}"/>
+            
+            <Button Style="{StaticResource ButtonStyle}" 
+                    Grid.Column="1" Grid.Row="4" 
+                    Content="B" FontSize="12" FontWeight="Bold"
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+            <TextBlock Grid.Column="2" Grid.Row="4" 
+                       Text="Жирный текст" 
+                       Style="{StaticResource TextStyle}"/>
+            
+            <Button Style="{StaticResource ButtonStyle}" 
+                    Grid.Column="1" Grid.Row="5" 
+                    Content="B" FontSize="12" FontStyle="Italic" 
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+            <TextBlock Grid.Column="2" Grid.Row="5" 
+                       Text="Курсив" 
+                       Style="{StaticResource TextStyle}"/>
+            
+            <Button Style="{StaticResource ButtonStyle}" 
+                    Grid.Column="1" Grid.Row="6" 
+                    Content="B" FontSize="12" 
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+            <TextBlock Grid.Column="2" Grid.Row="6" 
+                       Text="Подчеркнутый" 
+                       Style="{StaticResource TextStyle}"/>
+            
+            <Button Style="{StaticResource ButtonStyle}" 
+                    Grid.Column="1" Grid.Row="7" 
+                    Content="B" FontSize="12" 
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+            <TextBlock Grid.Column="2" Grid.Row="7" 
+                       Text="Зачеркнутый" 
+                       Style="{StaticResource TextStyle}"/>
+            
+            <Button Style="{StaticResource ButtonStyle}" 
+                    Grid.Column="1" Grid.Row="8" 
+                    Content="" FontSize="12" 
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+            <TextBlock Grid.Column="2" Grid.Row="8" 
+                       Text="Скрытый" 
+                       Style="{StaticResource TextStyle}"/>
 
         </Grid>
         <Grid x:Name="SecondControlBlock" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Height="160" Width="205">
@@ -133,7 +186,8 @@
             <Button Content="B - подчеркнуть" Grid.Row="5"/>
         </Grid>
         <wv2:WebView2 x:Name="WebViewControl" Source="about:blank"
-                      Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Margin="5,5,5,48" VerticalAlignment="Stretch"/>
+                      Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" 
+                      Margin="5,5,5,48" VerticalAlignment="Stretch"/>
         
         <Button Grid.Column="1" Grid.Row="2" 
                 HorizontalAlignment="Left" VerticalAlignment="Top" 

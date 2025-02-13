@@ -1,10 +1,7 @@
-﻿using DiscordTextEditor.ViewModel.Commands;
-using Microsoft.Web.WebView2.WinForms;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using Microsoft.Web.WebView2.Wpf;
 using System.Diagnostics;
+using Microsoft.Web.WebView2.Core;
 
 namespace DiscordTextEditor.ViewModel
 {
@@ -12,25 +9,37 @@ namespace DiscordTextEditor.ViewModel
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private string? _text;
+        private string _text = string.Empty;
         public string Text
         {
-            get => _text!;
+            get { return _text; } 
             set
             {
                 _text = value;
-                OnPropertyChanged();
-                ChangeTextCommand.RaiseCanExecuteChanged(); 
+                OnPropertyChanged(nameof(Text));
             }
         }
 
-        public RelayCommand ChangeTextCommand { get; }
+        private CoreWebView2? _coreWebView;
+
+        public CoreWebView2? CoreWebView
+        {
+            get { return _coreWebView; }
+            set 
+            { 
+                _coreWebView = value;
+                OnPropertyChanged(nameof(CoreWebView));
+                
+            }
+        }
+
+
+        public RelayCommand ChangeTextCommand { get; set; }
 
         public MainViewModel()
         {
             ChangeTextCommand = new RelayCommand(ExecuteChangeText, CanExecuteChangeText);
         }
-
 
         private void ExecuteChangeText(object? parameter)
         {
@@ -41,6 +50,19 @@ namespace DiscordTextEditor.ViewModel
         private bool CanExecuteChangeText(object? parameter)
         {
             return !string.IsNullOrWhiteSpace(Text);
+        }
+
+        public void InitializeWebView(CoreWebView2 webView)
+        {
+            CoreWebView = webView;
+            CoreWebView.WebMessageReceived += CoreWebView_WebMessageReceived;
+        }
+
+        private void CoreWebView_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+        {
+            string textFromWeb = e.WebMessageAsJson.Trim('"');
+            Text = textFromWeb;
+
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null!)
