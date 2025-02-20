@@ -2,6 +2,8 @@
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using Microsoft.Web.WebView2.Core;
+using System.Windows;
+using System.Windows.Input;
 
 namespace DiscordTextEditor.ViewModel
 {
@@ -9,10 +11,11 @@ namespace DiscordTextEditor.ViewModel
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        #region Свойства класса
         private string _text = string.Empty;
         public string Text
         {
-            get { return _text; } 
+            get { return _text; }
             set
             {
                 _text = value;
@@ -25,20 +28,40 @@ namespace DiscordTextEditor.ViewModel
         public CoreWebView2? CoreWebView
         {
             get { return _coreWebView; }
-            set 
-            { 
+            set
+            {
                 _coreWebView = value;
                 OnPropertyChanged(nameof(CoreWebView));
-                
+
             }
         }
 
-
-        public RelayCommand ChangeTextCommand { get; set; }
-
+        #endregion
         public MainViewModel()
         {
             ChangeTextCommand = new RelayCommand(ExecuteChangeText, CanExecuteChangeText);
+            DragCommand = new RelayCommand(Drag);
+            CloseCommand = new RelayCommand(CloseApp);
+        }
+
+        #region Commands
+        public RelayCommand ChangeTextCommand { get; set; }
+        public RelayCommand DragCommand { get; set; }
+        public RelayCommand CloseCommand { get; set; }
+
+
+        private void CloseApp(object obj)
+        {
+            Application.Current.Shutdown();
+        }
+
+
+        private void Drag(object obj)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Pressed && Application.Current.MainWindow != null)
+            {
+                Application.Current.MainWindow.DragMove();
+            }
         }
 
         private void ExecuteChangeText(object? parameter)
@@ -52,6 +75,9 @@ namespace DiscordTextEditor.ViewModel
             return !string.IsNullOrWhiteSpace(Text);
         }
 
+        #endregion
+
+        #region Web
         public void InitializeWebView(CoreWebView2 webView)
         {
             CoreWebView = webView;
@@ -62,8 +88,9 @@ namespace DiscordTextEditor.ViewModel
         {
             string textFromWeb = e.WebMessageAsJson.Trim('"');
             Text = textFromWeb;
-
         }
+
+        #endregion
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null!)
         {

@@ -13,7 +13,7 @@ namespace DiscordTextEditor
         {
             InitializeComponent();
             DataContext = new MainViewModel();
-            Window_Loaded();
+            Loaded += MainWindow_Loaded;
 
             WebViewControl.CoreWebView2InitializationCompleted += WebView2_CoreWebView2InitializationCompleted;
         }
@@ -27,8 +27,7 @@ namespace DiscordTextEditor
             }
         }
 
-
-        private async void Window_Loaded()
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string htmlPath = System.IO.Path.Combine(appDirectory, "View", "Web", "webEditor.html");
@@ -39,19 +38,6 @@ namespace DiscordTextEditor
             }
             WebViewControl.Source = new Uri(htmlPath);
             await WebViewControl.EnsureCoreWebView2Async();
-        }
-
-        private void Drag(object sender, RoutedEventArgs e)
-        {
-            if (Mouse.LeftButton == MouseButtonState.Pressed && MainWindow.Window != null)
-            {
-                MainWindow.Window.DragMove();
-            }
-        }
-
-        public void CloseApp(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
         }
     }
 }
