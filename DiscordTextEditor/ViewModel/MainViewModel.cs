@@ -9,30 +9,32 @@ namespace DiscordTextEditor.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        #region Свойства класса
+        #region Property
         private string _text = string.Empty;
         public string Text
         {
             get { return _text; }
             set
             {
-                _text = value;
-                OnPropertyChanged(nameof(Text));
+                if (_text != value)
+                {
+                    _text = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
         private CoreWebView2? _coreWebView;
-
         public CoreWebView2? CoreWebView
         {
             get { return _coreWebView; }
             set
             {
-                _coreWebView = value;
-                OnPropertyChanged(nameof(CoreWebView));
-
+                if (_coreWebView != value)
+                {
+                    _coreWebView = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -40,29 +42,10 @@ namespace DiscordTextEditor.ViewModel
         public MainViewModel()
         {
             ChangeTextCommand = new RelayCommand(ExecuteChangeText, CanExecuteChangeText);
-            DragCommand = new RelayCommand(Drag);
-            CloseCommand = new RelayCommand(CloseApp);
         }
 
         #region Commands
         public RelayCommand ChangeTextCommand { get; set; }
-        public RelayCommand DragCommand { get; set; }
-        public RelayCommand CloseCommand { get; set; }
-
-
-        private void CloseApp(object obj)
-        {
-            Application.Current.Shutdown();
-        }
-
-
-        private void Drag(object obj)
-        {
-            if (Mouse.LeftButton == MouseButtonState.Pressed && Application.Current.MainWindow != null)
-            {
-                Application.Current.MainWindow.DragMove();
-            }
-        }
 
         private void ExecuteChangeText(object? parameter)
         {
@@ -92,6 +75,7 @@ namespace DiscordTextEditor.ViewModel
 
         #endregion
 
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null!)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

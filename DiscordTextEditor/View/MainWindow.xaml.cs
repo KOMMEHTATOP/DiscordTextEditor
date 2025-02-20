@@ -14,17 +14,7 @@ namespace DiscordTextEditor
             InitializeComponent();
             DataContext = new MainViewModel();
             Loaded += MainWindow_Loaded;
-
             WebViewControl.CoreWebView2InitializationCompleted += WebView2_CoreWebView2InitializationCompleted;
-        }
-
-        private void WebView2_CoreWebView2InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e)
-        {
-            if (WebViewControl.CoreWebView2 != null)
-            {
-                var viewModel = (MainViewModel)DataContext;
-                viewModel.InitializeWebView(WebViewControl.CoreWebView2);
-            }
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -38,6 +28,15 @@ namespace DiscordTextEditor
             }
             WebViewControl.Source = new Uri(htmlPath);
             await WebViewControl.EnsureCoreWebView2Async();
+        }
+
+        private void WebView2_CoreWebView2InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e)
+        {
+            if (WebViewControl.CoreWebView2 != null)
+            {
+                var viewModel = (MainViewModel)DataContext;
+                viewModel.InitializeWebView(WebViewControl.CoreWebView2);
+            }
         }
     }
 }
