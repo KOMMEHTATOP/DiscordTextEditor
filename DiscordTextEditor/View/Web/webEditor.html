@@ -20,38 +20,42 @@
 
         #editor {
             width: 100%;
-            height: calc(100vh - 20px); /* Пример для фиксированного отступа */
+            height: calc(100vh - 20px); /* Высота с учетом отступов */
             padding: 10px;
             font-size: 16px;
             border: none;
             outline: none;
             box-sizing: border-box;
             background-color: #58584A; /* Темный фон для текстового поля */
-            color: #d4d4d4; /* Светлый текст */
-            resize: none; /* Отключение изменения размера */
+            color: #d4d4d4; /* Цвет текста */
+            overflow-y: auto; /* Добавляем прокрутку для длинного текста */
         }
 
-        .placeholder {
-            color: #888;
-        }
-
-        /* Стили для плейсхолдера */
-        #editor::placeholder {
-            color: #888;
-        }
+            /* Добавляем стили для div, чтобы работал как текстовое поле */
+            #editor[contenteditable]:empty::before {
+                content: attr(placeholder); /* Используем атрибут placeholder */
+                color: #888;
+            }
     </style>
 </head>
 <body>
-    <textarea id="editor" placeholder="Введите текст..."></textarea>
+    <div id="editor" contenteditable="true" placeholder="Введите текст..."></div>
 
     <script>
         function sendTextToWpf() {
-            let text = document.getElementById('editor').value;
+            let htmlContent = document.getElementById('editor').innerHTML; // Получаем HTML содержимое
             // Отправляем текст в WPF для конвертации
-            window.chrome.webview.postMessage(text);
+            if (window.chrome?.webview) {
+                window.chrome.webview.postMessage(htmlContent);
+            } else {
+                console.warn("WebView2 не доступен. HTML: ", htmlContent);
+            }
         }
 
         document.getElementById("editor").addEventListener("input", sendTextToWpf);
+
+        // Передача начального текста при загрузке страницы
+        sendTextToWpf();
     </script>
 </body>
 </html>

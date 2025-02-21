@@ -15,7 +15,8 @@
             <TextBlock x:Name="BoldText"
                        Text="Пример"
                        FontWeight="Bold"/>
-            <Button x:Name="Bold" Content="Bold"/>
+            <Button x:Name="Bold" Content="Bold"
+                    Command="{Binding ChangeTextCommand}"/>
         </StackPanel>
 
         <!-- GridSplitter -->

@@ -10,7 +10,7 @@ namespace DiscordTextEditor.ViewModel
     public class MainViewModel : INotifyPropertyChanged
     {
         #region Property
-        private string _text = string.Empty;
+        private string _text = "asdf";
         public string Text
         {
             get { return _text; }
@@ -20,6 +20,7 @@ namespace DiscordTextEditor.ViewModel
                 {
                     _text = value;
                     OnPropertyChanged();
+                    ChangeTextCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -49,8 +50,20 @@ namespace DiscordTextEditor.ViewModel
 
         private void ExecuteChangeText(object? parameter)
         {
-            Text = "TextChanged!";
+            string baseText = Text;
+            if (baseText.StartsWith("<b>") && baseText.EndsWith("<b>"))
+            {
+                Text = baseText.Substring(3, baseText.Length - 7);
+            }
+            else
+            {
+                Text = $"<b>{baseText}<b>";
+            }
+
             Debug.WriteLine($"Свойство в поле Text изменено: {Text}");
+            //отправляем текст обратно в HTML
+            CoreWebView?.ExecuteScriptAsync($"document.getElementById('editor').innerHTML = `{Text}`;");
+
         }
 
         private bool CanExecuteChangeText(object? parameter)
@@ -63,14 +76,29 @@ namespace DiscordTextEditor.ViewModel
         #region Web
         public void InitializeWebView(CoreWebView2 webView)
         {
+            if (webView == null)
+            {
+                Debug.WriteLine("Ошибка: WebView2 не инициализирован");
+                return;
+            }
             CoreWebView = webView;
             CoreWebView.WebMessageReceived += CoreWebView_WebMessageReceived;
+            Debug.WriteLine("WebView2 успешно инициализирован");
         }
 
         private void CoreWebView_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
-            string textFromWeb = e.WebMessageAsJson.Trim('"');
-            Text = textFromWeb;
+            try
+            {
+                string textFromWeb = e.WebMessageAsJson.Trim('"');
+                Text = textFromWeb;
+                Debug.WriteLine($"Получено сообщение из браузера: {Text}");
+            }
+            catch (Exception ex)
+            {
+
+                Debug.WriteLine($"Ошибка обработки сообщения из WebView2: {ex.Message}");
+            }
         }
 
         #endregion

@@ -17,23 +17,23 @@ namespace DiscordTextEditor
             WebViewControl.CoreWebView2InitializationCompleted += WebView2_CoreWebView2InitializationCompleted;
         }
 
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string htmlPath = System.IO.Path.Combine(appDirectory, "View", "Web", "webEditor.html");
-            if (!System.IO.Path.Exists(htmlPath))
+            if (!System.IO.File.Exists(htmlPath))
             {
                 MessageBox.Show($"Файл не найден: {htmlPath}");
                 return;
             }
             WebViewControl.Source = new Uri(htmlPath);
-            await WebViewControl.EnsureCoreWebView2Async();
         }
 
-        private void WebView2_CoreWebView2InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e)
+        private async void WebView2_CoreWebView2InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e)
         {
             if (WebViewControl.CoreWebView2 != null)
             {
+                await WebViewControl.EnsureCoreWebView2Async();
                 var viewModel = (MainViewModel)DataContext;
                 viewModel.InitializeWebView(WebViewControl.CoreWebView2);
             }
