@@ -43,19 +43,35 @@
 
     <script>
         function sendTextToWpf() {
-            let htmlContent = document.getElementById('editor').innerHTML; // Получаем HTML содержимое
-            // Отправляем текст в WPF для конвертации
+            let markdownText = document.getElementById('editor').innerHTML; 
             if (window.chrome?.webview) {
-                window.chrome.webview.postMessage(htmlContent);
-            } else {
-                console.warn("WebView2 не доступен. HTML: ", htmlContent);
+                window.chrome.webview.postMessage(markdownText);
+            }
+            else {
+                console.warn("WebView2 не доступен. HTML: ", markdownText);
             }
         }
 
         document.getElementById("editor").addEventListener("input", sendTextToWpf);
-
-        // Передача начального текста при загрузке страницы
         sendTextToWpf();
+
+        window.getSelectedText = function () {
+            let selection = window.getSelection();
+            if (!selection.rangeCount) return "";
+
+            return selection.toString();
+        };
+
+        window.replaceSelectedText = function (newText) {
+            let selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            let range = selection.getRangeAt(0);
+            range.deleteContents(); // Удаляем старый текст
+            range.insertNode(document.createTextNode(newText)); // Вставляем новый
+        };
+
+
     </script>
 </body>
 </html>

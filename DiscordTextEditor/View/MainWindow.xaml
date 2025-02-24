@@ -16,7 +16,7 @@
                        Text="Пример"
                        FontWeight="Bold"/>
             <Button x:Name="Bold" Content="Bold"
-                    Command="{Binding ChangeTextCommand}"/>
+                    Command="{Binding ChangeTextCommand, Mode=TwoWay}"/>
         </StackPanel>
 
         <!-- GridSplitter -->

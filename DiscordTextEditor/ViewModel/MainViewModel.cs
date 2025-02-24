@@ -4,13 +4,14 @@ using System.Diagnostics;
 using Microsoft.Web.WebView2.Core;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Web.WebView2.Wpf;
 
 namespace DiscordTextEditor.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
         #region Property
-        private string _text = "asdf";
+        private string _text = string.Empty;
         public string Text
         {
             get { return _text; }
@@ -48,23 +49,33 @@ namespace DiscordTextEditor.ViewModel
         #region Commands
         public RelayCommand ChangeTextCommand { get; set; }
 
-        private void ExecuteChangeText(object? parameter)
+        private async void ExecuteChangeText(object? parameter)
         {
-            string baseText = Text;
-            if (baseText.StartsWith("<b>") && baseText.EndsWith("<b>"))
-            {
-                Text = baseText.Substring(3, baseText.Length - 7);
-            }
-            else
-            {
-                Text = $"<b>{baseText}<b>";
-            }
+            if (CoreWebView == null) return;
 
-            Debug.WriteLine($"Свойство в поле Text изменено: {Text}");
-            //отправляем текст обратно в HTML
-            CoreWebView?.ExecuteScriptAsync($"document.getElementById('editor').innerHTML = `{Text}`;");
+            string selectedTextJson = await CoreWebView.ExecuteScriptAsync("window.getSelectedText();");
+            Debug.WriteLine($"Получен выделенный текст (JSON): {selectedTextJson}");
 
+            string selectedText = selectedTextJson.Trim('"');
+
+            if (string.IsNullOrWhiteSpace(selectedText)) return;
+
+            // Проверяем, содержится ли выделенный текст в полном тексте
+            if (!Text.Contains(selectedText)) return;
+
+            // Применяем форматирование
+            string boldText = StringBuilderForDiscord.ApplyMarkDownBold(selectedText);
+
+            // Заменяем выделенный текст в общем тексте
+            Text = Text.Replace(selectedText, boldText);
+
+            string textToWeb = StringBuilderForDiscord.ConvertToHtml(Text);
+            Debug.WriteLine($"В методе ExecuteChangeText, преобразовалось свойство Text на {textToWeb}");
+
+            // Обновляем содержимое редактора
+            await CoreWebView.ExecuteScriptAsync($"document.getElementById('editor').innerHTML = `{textToWeb}`;");
         }
+
 
         private bool CanExecuteChangeText(object? parameter)
         {
@@ -90,16 +101,25 @@ namespace DiscordTextEditor.ViewModel
         {
             try
             {
+                //Debug.WriteLine($"Получено сообщение из JS в метод CoreWebView_WebMessageReceived: {e.WebMessageAsJson}");
                 string textFromWeb = e.WebMessageAsJson.Trim('"');
                 Text = textFromWeb;
-                Debug.WriteLine($"Получено сообщение из браузера: {Text}");
             }
             catch (Exception ex)
             {
-
                 Debug.WriteLine($"Ошибка обработки сообщения из WebView2: {ex.Message}");
             }
         }
+
+        private async Task<string> GetSelectedTextAsync()
+        {
+            if (CoreWebView == null)
+                return string.Empty;
+
+            string result = await CoreWebView.ExecuteScriptAsync("window.getSelectedText();");
+            return result.Trim('"'); // Убираем кавычки, т.к. JS возвращает строку в JSON-формате
+        }
+
 
         #endregion
 
