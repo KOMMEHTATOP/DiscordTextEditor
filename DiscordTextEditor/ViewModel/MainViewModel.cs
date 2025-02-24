@@ -4,7 +4,7 @@ using System.Diagnostics;
 using Microsoft.Web.WebView2.Core;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.Web.WebView2.Wpf;
+using AnsiMarkdownLib.Formatters;
 
 namespace DiscordTextEditor.ViewModel
 {
@@ -51,31 +51,26 @@ namespace DiscordTextEditor.ViewModel
 
         private async void ExecuteChangeText(object? parameter)
         {
-            if (CoreWebView == null) return;
-
-            string selectedTextJson = await CoreWebView.ExecuteScriptAsync("window.getSelectedText();");
-            Debug.WriteLine($"Получен выделенный текст (JSON): {selectedTextJson}");
-
-            string selectedText = selectedTextJson.Trim('"');
-
-            if (string.IsNullOrWhiteSpace(selectedText)) return;
-
-            // Проверяем, содержится ли выделенный текст в полном тексте
-            if (!Text.Contains(selectedText)) return;
-
-            // Применяем форматирование
-            string boldText = StringBuilderForDiscord.ApplyMarkDownBold(selectedText);
-
-            // Заменяем выделенный текст в общем тексте
-            Text = Text.Replace(selectedText, boldText);
-
-            string textToWeb = StringBuilderForDiscord.ConvertToHtml(Text);
-            Debug.WriteLine($"В методе ExecuteChangeText, преобразовалось свойство Text на {textToWeb}");
-
-            // Обновляем содержимое редактора
-            await CoreWebView.ExecuteScriptAsync($"document.getElementById('editor').innerHTML = `{textToWeb}`;");
+            await ApplyFormatting("bold");
         }
 
+        private async Task ApplyFormatting(string command)
+        {
+            if (CoreWebView == null) return;
+
+            await CoreWebView.ExecuteScriptAsync($"document.execCommand('{command}');");
+
+            // Обновляем свойство Text
+            Text = await GetEditorHtml();
+        }
+
+        private async Task<string> GetEditorHtml()
+        {
+            if (CoreWebView == null) return string.Empty;
+
+            string html = await CoreWebView.ExecuteScriptAsync("document.getElementById('editor').innerHTML;");
+            return html.Trim('"'); // Убираем лишние кавычки
+        }
 
         private bool CanExecuteChangeText(object? parameter)
         {
@@ -110,16 +105,6 @@ namespace DiscordTextEditor.ViewModel
                 Debug.WriteLine($"Ошибка обработки сообщения из WebView2: {ex.Message}");
             }
         }
-
-        private async Task<string> GetSelectedTextAsync()
-        {
-            if (CoreWebView == null)
-                return string.Empty;
-
-            string result = await CoreWebView.ExecuteScriptAsync("window.getSelectedText();");
-            return result.Trim('"'); // Убираем кавычки, т.к. JS возвращает строку в JSON-формате
-        }
-
 
         #endregion
 

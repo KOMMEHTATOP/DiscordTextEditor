@@ -53,24 +53,6 @@
         }
 
         document.getElementById("editor").addEventListener("input", sendTextToWpf);
-        sendTextToWpf();
-
-        window.getSelectedText = function () {
-            let selection = window.getSelection();
-            if (!selection.rangeCount) return "";
-
-            return selection.toString();
-        };
-
-        window.replaceSelectedText = function (newText) {
-            let selection = window.getSelection();
-            if (!selection.rangeCount) return;
-
-            let range = selection.getRangeAt(0);
-            range.deleteContents(); // Удаляем старый текст
-            range.insertNode(document.createTextNode(newText)); // Вставляем новый
-        };
-
 
     </script>
 </body>
