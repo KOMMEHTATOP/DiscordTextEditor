@@ -5,6 +5,8 @@ using Microsoft.Web.WebView2.Core;
 using System.Windows;
 using System.Windows.Input;
 using AnsiMarkdownLib.Formatters;
+using DiscordTextEditor.Helpers;
+using System.Text.Json;
 
 namespace DiscordTextEditor.ViewModel
 {
@@ -22,6 +24,7 @@ namespace DiscordTextEditor.ViewModel
                     _text = value;
                     OnPropertyChanged();
                     ChangeTextCommand.RaiseCanExecuteChanged();
+                    CopyTextCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -44,10 +47,27 @@ namespace DiscordTextEditor.ViewModel
         public MainViewModel()
         {
             ChangeTextCommand = new RelayCommand(ExecuteChangeText, CanExecuteChangeText);
+            CopyTextCommand = new RelayCommand(ExecuteCopyText, CanExecuteCopyText);
         }
 
         #region Commands
         public RelayCommand ChangeTextCommand { get; set; }
+        public RelayCommand CopyTextCommand { get; set; }
+
+        private void ExecuteCopyText(object? parameter)
+        {
+            if (!string.IsNullOrWhiteSpace(Text))
+            {
+                string markdownText = ConvertHtmlToMarkdown.Convert(Text);
+                Clipboard.SetText(markdownText);
+            }
+        }
+
+        private bool CanExecuteCopyText(object? parameter)
+        {
+            return !string.IsNullOrWhiteSpace(Text);
+        }
+
 
         private async void ExecuteChangeText(object? parameter)
         {
@@ -68,9 +88,12 @@ namespace DiscordTextEditor.ViewModel
         {
             if (CoreWebView == null) return string.Empty;
 
-            string html = await CoreWebView.ExecuteScriptAsync("document.getElementById('editor').innerHTML;");
-            return html.Trim('"'); // Убираем лишние кавычки
+            string jsonHtml = await CoreWebView.ExecuteScriptAsync("document.getElementById('editor').innerHTML;");
+
+            // Декодируем JSON-строку, убирая лишние символы экранирования
+            return JsonSerializer.Deserialize<string>(jsonHtml) ?? string.Empty;
         }
+
 
         private bool CanExecuteChangeText(object? parameter)
         {
@@ -96,15 +119,16 @@ namespace DiscordTextEditor.ViewModel
         {
             try
             {
-                //Debug.WriteLine($"Получено сообщение из JS в метод CoreWebView_WebMessageReceived: {e.WebMessageAsJson}");
                 string textFromWeb = e.WebMessageAsJson.Trim('"');
-                Text = textFromWeb;
+                Text = ConvertHtmlToMarkdown.Convert(textFromWeb);
+                Debug.WriteLine($"Текст в поле Text: {Text}");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Ошибка обработки сообщения из WebView2: {ex.Message}");
             }
         }
+
 
         #endregion
 
