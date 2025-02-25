@@ -90,10 +90,8 @@ namespace DiscordTextEditor.ViewModel
 
             string jsonHtml = await CoreWebView.ExecuteScriptAsync("document.getElementById('editor').innerHTML;");
 
-            // Декодируем JSON-строку, убирая лишние символы экранирования
             return JsonSerializer.Deserialize<string>(jsonHtml) ?? string.Empty;
         }
-
 
         private bool CanExecuteChangeText(object? parameter)
         {
@@ -128,7 +126,6 @@ namespace DiscordTextEditor.ViewModel
                 Debug.WriteLine($"Ошибка обработки сообщения из WebView2: {ex.Message}");
             }
         }
-
 
         #endregion
 

@@ -16,6 +16,8 @@ namespace DiscordTextEditor.Helpers
             // Преобразуем <b> и <strong> в **
             html = html.Replace("<b>", "**").Replace("</b>", "**");
             html = html.Replace("<strong>", "**").Replace("</strong>", "**");
+            html = html.Replace("<div>", "\n").Replace("</div>", "").Replace("<br>", "\n").Replace("</br>", "");
+            html = html.Replace("&nbsp;", " "); // Убираем неразрывные пробелы
 
             return html;
         }
