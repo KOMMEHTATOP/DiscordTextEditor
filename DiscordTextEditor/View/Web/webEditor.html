@@ -52,6 +52,44 @@
             }
         }
 
+        function applyFormatting(command) {
+            let selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            let range = selection.getRangeAt(0);
+            let selectedNode = range.commonAncestorContainer;
+
+            // Проверяем, находится ли выделение внутри нужного тега
+            let parentTag = findParentTag(selectedNode, command.toUpperCase());
+
+            if (parentTag) {
+                // Если уже есть тег, снимаем его
+                let parent = parentTag.parentNode;
+                let contents = parentTag.childNodes;
+                while (contents.length > 0) {
+                    parent.insertBefore(contents[0], parentTag);
+                }
+                parent.removeChild(parentTag);
+            } else {
+                // Если тега нет, добавляем его
+                let tag = document.createElement(command);
+                tag.appendChild(range.extractContents());
+                range.insertNode(tag);
+            }
+        }
+
+        // Вспомогательная функция для поиска родительского тега
+        function findParentTag(node, tagName) {
+            while (node && node.nodeType !== Node.ELEMENT_NODE) {
+                node = node.parentNode;
+            }
+            while (node && node.tagName !== tagName) {
+                node = node.parentNode;
+            }
+            return node;
+        }
+
+
         document.getElementById("editor").addEventListener("input", sendTextToWpf);
 
     </script>

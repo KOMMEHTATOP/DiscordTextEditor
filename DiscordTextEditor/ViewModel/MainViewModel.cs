@@ -71,14 +71,18 @@ namespace DiscordTextEditor.ViewModel
 
         private async void ExecuteChangeText(object? parameter)
         {
-            await ApplyFormatting("bold");
+
+            if (parameter is string format)
+            {
+                await ApplyFormatting(format);
+            }
         }
 
         private async Task ApplyFormatting(string command)
         {
             if (CoreWebView == null) return;
 
-            await CoreWebView.ExecuteScriptAsync($"document.execCommand('{command}');");
+            await CoreWebView.ExecuteScriptAsync($"applyFormatting('{command}');");
 
             // Обновляем свойство Text
             Text = await GetEditorHtml();
@@ -119,7 +123,6 @@ namespace DiscordTextEditor.ViewModel
             {
                 string textFromWeb = e.WebMessageAsJson.Trim('"');
                 Text = ConvertHtmlToMarkdown.Convert(textFromWeb);
-                Debug.WriteLine($"Текст в поле Text: {Text}");
             }
             catch (Exception ex)
             {
