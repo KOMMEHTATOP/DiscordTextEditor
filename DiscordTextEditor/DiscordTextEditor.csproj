@@ -29,8 +29,4 @@
     <Folder Include="View\Styles\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\AnsiMarkdownLib\AnsiMarkdownLib\AnsiMarkdownLib.csproj" />
-  </ItemGroup>
-
 </Project>

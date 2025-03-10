@@ -4,7 +4,6 @@ using System.Diagnostics;
 using Microsoft.Web.WebView2.Core;
 using System.Windows;
 using System.Windows.Input;
-using AnsiMarkdownLib.Formatters;
 using DiscordTextEditor.Helpers;
 using System.Text.Json;
 
